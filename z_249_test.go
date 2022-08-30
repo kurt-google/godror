@@ -17,17 +17,17 @@ func TestOpenCloseCrash(t *testing.T) {
 	join := make(chan struct{})
 	waitForSch := make(chan struct{})
 	go func() {
-		defer c1.Close()
 		waitForSch <- struct{}{}
 		e1 := c1.PingContext(context.TODO())
 		t.Logf("conn1 done: %v", e1)
+		c1.Close()
 		join <- struct{}{}
 	}()
 	go func() {
-		defer c2.Close()
 		<-waitForSch
 		e2 := c2.PingContext(context.TODO())
 		t.Logf("conn2 done: %v", e2)
+		c2.Close()
 		join <- struct{}{}
 	}()
 	<-join
